@@ -43,4 +43,4 @@ CLAUDE.md
 *.tsbuildinfo
 .vercel
 
-/generated/prisma
+src/generated/

@@ -1,0 +1,12 @@
+// Generator + datasource for the multi-file schema in this folder.
+// All .prisma files here are merged; the database URL comes from
+// prisma.config.ts (DATABASE_URL).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}

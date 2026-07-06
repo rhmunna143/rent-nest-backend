@@ -1,0 +1,16 @@
+model Payment {
+  id              String        @id @default(uuid())
+  rentalRequestId String        @unique
+  transactionId   String?       @unique
+  stripeSessionId String        @unique
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("usd")
+  method          String        @default("card")
+  provider        String        @default("STRIPE")
+  status          PaymentStatus @default(PENDING)
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  rentalRequest RentalRequest @relation(fields: [rentalRequestId], references: [id], onDelete: Cascade)
+}
