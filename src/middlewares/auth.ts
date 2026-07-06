@@ -1,8 +1,8 @@
-import type { RequestHandler } from "express";
+import type { Request, RequestHandler } from "express";
 import type { UserRole } from "../generated/prisma/enums.js";
 import prisma from "../lib/prisma.client.js";
 import { AppError } from "../utils/AppError.js";
-import { verifyToken, type JwtPayload } from "../utils/jwt.js";
+import { verifyAccessToken, type JwtPayload } from "../utils/jwt.js";
 
 export interface AuthUser {
   id: string;
@@ -17,17 +17,32 @@ declare global {
   }
 }
 
-export const authenticate: RequestHandler = async (req, _res, next) => {
+const extractToken = (req: Request): string | undefined => {
   const header = req.headers.authorization;
 
-  if (!header?.startsWith("Bearer ")) {
-    throw new AppError(401, "Authentication required. Provide a Bearer token.");
+  if (header) {
+    return header.startsWith("Bearer ")
+      ? header.slice("Bearer ".length)
+      : header;
+  }
+  
+  return req.cookies?.accessToken;
+};
+
+export const authenticate: RequestHandler = async (req, _res, next) => {
+  const token = extractToken(req);
+
+  if (!token) {
+    throw new AppError(
+      401,
+      "Authentication required. Provide a token via the Authorization header or cookie.",
+    );
   }
 
   let payload: JwtPayload;
 
   try {
-    payload = verifyToken(header.slice("Bearer ".length));
+    payload = verifyAccessToken(token);
   } catch {
     throw new AppError(401, "Invalid or expired token");
   }

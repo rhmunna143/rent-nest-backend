@@ -2,7 +2,12 @@ import bcrypt from "bcryptjs";
 import prisma from "../../lib/prisma.client.js";
 import { config } from "../../config/index.js";
 import { AppError } from "../../utils/AppError.js";
-import { signToken } from "../../utils/jwt.js";
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+  type JwtPayload,
+} from "../../utils/jwt.js";
 import type {
   AuthResult,
   LoginUserInput,
@@ -22,6 +27,11 @@ const safeUserSelect = {
   createdAt: true,
   updatedAt: true,
 } as const;
+
+const issueTokens = (payload: JwtPayload) => ({
+  accessToken: signAccessToken(payload),
+  refreshToken: signRefreshToken(payload),
+});
 
 class UserService {
   // register user
@@ -47,7 +57,7 @@ class UserService {
       select: safeUserSelect,
     });
 
-    return { user, token: signToken({ userId: user.id, role: user.role }) };
+    return { user, ...issueTokens({ userId: user.id, role: user.role }) };
   }
 
   // login user
@@ -68,8 +78,32 @@ class UserService {
 
     return {
       user: safeUser,
-      token: signToken({ userId: user.id, role: user.role }),
+      ...issueTokens({ userId: user.id, role: user.role }),
     };
+  }
+
+  // refresh tokens
+  async refreshTokens(refreshToken: string): Promise<AuthResult> {
+    let payload: JwtPayload;
+
+    try {
+      payload = verifyRefreshToken(refreshToken);
+    } catch {
+      throw new AppError(401, "Invalid or expired refresh token");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: safeUserSelect,
+    });
+
+    if (!user) throw new AppError(401, "User no longer exists");
+
+    if (user.status === "BANNED") {
+      throw new AppError(403, "Your account has been banned");
+    }
+
+    return { user, ...issueTokens({ userId: user.id, role: user.role }) };
   }
 
   // get me/current user
@@ -92,7 +126,7 @@ class UserService {
 
     if (input.profileImage !== undefined)
       data["profileImage"] = input.profileImage;
-    
+
     if (input.password !== undefined) {
       data["password"] = await bcrypt.hash(
         input.password,

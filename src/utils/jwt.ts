@@ -7,10 +7,20 @@ export interface JwtPayload {
   role: UserRole;
 }
 
-export const signToken = (payload: JwtPayload): string =>
-  jwt.sign(payload, config.jwtSecret, {
-    expiresIn: config.jwtExpiresIn as NonNullable<SignOptions["expiresIn"]>,
+type ExpiresIn = NonNullable<SignOptions["expiresIn"]>;
+
+export const signAccessToken = (payload: JwtPayload): string =>
+  jwt.sign(payload, config.jwtAccessSecret, {
+    expiresIn: config.jwtAccessExpiresIn as ExpiresIn,
   });
 
-export const verifyToken = (token: string): JwtPayload =>
-  jwt.verify(token, config.jwtSecret) as JwtPayload;
+export const signRefreshToken = (payload: JwtPayload): string =>
+  jwt.sign(payload, config.jwtRefreshSecret, {
+    expiresIn: config.jwtRefreshExpiresIn as ExpiresIn,
+  });
+
+export const verifyAccessToken = (token: string): JwtPayload =>
+  jwt.verify(token, config.jwtAccessSecret) as JwtPayload;
+
+export const verifyRefreshToken = (token: string): JwtPayload =>
+  jwt.verify(token, config.jwtRefreshSecret) as JwtPayload;

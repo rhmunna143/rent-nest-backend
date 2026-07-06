@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import express, { type Express, type Request, type Response } from "express";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.js";
 import { notFound } from "./middlewares/notFound.js";
@@ -7,6 +8,7 @@ const app: Express = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World! The server is running.");

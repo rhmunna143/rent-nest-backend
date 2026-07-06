@@ -22,6 +22,10 @@ router.post(
   userController.loginUser,
 );
 
+router.post("/auth/refresh-token", userController.refreshToken);
+
+router.post("/auth/logout", userController.logoutUser);
+
 router.get("/auth/me", authenticate, userController.getMe);
 
 router.patch(

@@ -14,5 +14,6 @@ export type SafeUser = Omit<User, "password">;
 
 export interface AuthResult {
   user: SafeUser;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
