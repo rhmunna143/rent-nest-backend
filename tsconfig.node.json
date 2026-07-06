@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["prisma.config.ts"]
+  "include": ["prisma.config.ts", "prisma/seed.ts"]
 }
