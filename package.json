@@ -25,10 +25,7 @@
     "prisma:studio": "prisma studio",
     "prisma:format": "prisma format",
     "prisma:db-pull": "prisma db pull",
-    "prisma:db-push": "prisma db push",
-    "prisma:db-reset": "prisma migrate reset --force",
-    "prisma:db-drop": "prisma db drop --force",
-    "prisma:db-connect": "prisma db connect"
+    "prisma:db-push": "prisma db push"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
