@@ -1,0 +1,9 @@
+{
+  // Solution-style config: routes editor tooling to the right project.
+  // App code lives in tsconfig.app.json, root config files in tsconfig.node.json.
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}

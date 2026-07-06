@@ -1,0 +1,46 @@
+{
+  "name": "rent-nest-backend",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/rhmunna143/rent-nest-backend#readme",
+  "bugs": {
+    "url": "https://github.com/rhmunna143/rent-nest-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhmunna143/rent-nest-backend.git"
+  },
+  "license": "ISC",
+  "author": "@rhmunna143",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.app.json",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:format": "prisma format",
+    "prisma:db-pull": "prisma db pull",
+    "prisma:db-push": "prisma db push",
+    "prisma:db-reset": "prisma migrate reset --force",
+    "prisma:db-drop": "prisma db drop --force",
+    "prisma:db-connect": "prisma db connect"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@types/pg": "^8.20.0",
+    "prisma": "^7.8.0",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
+    "pg": "^8.22.0"
+  }
+}

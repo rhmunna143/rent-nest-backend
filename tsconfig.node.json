@@ -1,0 +1,13 @@
+{
+  // Root-level config files (prisma.config.ts) — type-checked only, never emitted
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["prisma.config.ts"]
+}
