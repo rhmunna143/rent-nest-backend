@@ -6,6 +6,7 @@ import { categoryRouter } from "./modules/category/category.route.js";
 import { paymentRouter } from "./modules/payment/payment.route.js";
 import { propertyRouter } from "./modules/property/property.route.js";
 import { rentalRequestRouter } from "./modules/rental-request/rentalRequest.route.js";
+import { reviewRouter } from "./modules/review/review.route.js";
 import { userRouter } from "./modules/user/user.route.js";
 
 const app: Express = express();
@@ -36,6 +37,7 @@ app.use("/api", propertyRouter);
 app.use("/api", categoryRouter);
 app.use("/api", rentalRequestRouter);
 app.use("/api", paymentRouter);
+app.use("/api", reviewRouter);
 
 app.use(notFound);
 app.use(globalErrorHandler);
