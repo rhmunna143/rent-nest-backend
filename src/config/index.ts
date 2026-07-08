@@ -26,4 +26,11 @@ export const config = {
   accessCookieMaxAgeMs: 1 * DAY_MS,
   refreshCookieMaxAgeMs: 36 * DAY_MS,
   bcryptSaltRounds: 10,
+
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+  paymentSuccessUrl:
+    process.env.PAYMENT_SUCCESS_URL ?? "http://localhost:8080/payment-success",
+  paymentCancelUrl:
+    process.env.PAYMENT_CANCEL_URL ?? "http://localhost:8080/payment-cancel",
 };
