@@ -1,0 +1,6 @@
+Backend Repo     : https://github.com/rhmunna143/rent-nest-backend
+Live API         : https://rent-nest-backend-eight.vercel.app
+API Docs         : https://documenter.getpostman.com/view/31457961/2sBY4Jy3xC
+Demo Video       : https://youtu.be/qN1sXaloDjE
+Admin Email      : admin@rentnest.com
+Admin Password   : admin123
