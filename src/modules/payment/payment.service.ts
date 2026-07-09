@@ -1,4 +1,5 @@
 import type Stripe from "stripe";
+import type { Prisma } from "../../generated/prisma/client.js";
 import prisma from "../../lib/prisma.client.js";
 import { getStripe } from "../../lib/stripe.js";
 import { config } from "../../config/index.js";
@@ -87,10 +88,27 @@ class PaymentService {
 
   // webhook: payment succeeded — activate the rental
   async handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-    const payment = await prisma.payment.findUnique({
+    const rentalInclude = {
+      rentalRequest: { select: { id: true, propertyId: true, status: true } },
+    } as const;
+
+    let payment = await prisma.payment.findUnique({
       where: { stripeSessionId: session.id },
-      include: { rentalRequest: { select: { id: true, propertyId: true } } },
+      include: rentalInclude,
     });
+
+    // A checkout retry replaces the payment row's session id, so an event for
+    // the older session won't match — fall back to the rental request id we
+    // stored in the session metadata when creating it.
+    if (!payment) {
+      const rentalRequestId = session.metadata?.["rentalRequestId"];
+      if (!rentalRequestId) return; // not one of ours
+
+      payment = await prisma.payment.findUnique({
+        where: { rentalRequestId },
+        include: rentalInclude,
+      });
+    }
 
     // unknown session or duplicate delivery — nothing to do (idempotent)
     if (!payment || payment.status === "COMPLETED") return;
@@ -100,28 +118,42 @@ class PaymentService {
         ? session.payment_intent
         : (session.payment_intent?.id ?? null);
 
-    await prisma.$transaction([
+    const updates: Prisma.PrismaPromise<unknown>[] = [
       prisma.payment.update({
         where: { id: payment.id },
-        data: { status: "COMPLETED", transactionId, paidAt: new Date() },
-      }),
-      prisma.rentalRequest.update({
-        where: { id: payment.rentalRequestId },
-        data: { status: "ACTIVE" },
-      }),
-      prisma.property.update({
-        where: { id: payment.rentalRequest.propertyId },
-        data: { status: "RENTED" },
-      }),
-      // the property is taken — reject everyone else still waiting
-      prisma.rentalRequest.updateMany({
-        where: {
-          propertyId: payment.rentalRequest.propertyId,
-          status: "PENDING",
+        data: {
+          status: "COMPLETED",
+          stripeSessionId: session.id, // keep the row pointing at the session that was actually paid
+          transactionId,
+          paidAt: new Date(),
         },
-        data: { status: "REJECTED" },
       }),
-    ]);
+    ];
+
+    // Activate only rentals still awaiting activation — a late webhook retry
+    // must not resurrect a rental the landlord has already completed.
+    if (payment.rentalRequest.status === "APPROVED") {
+      updates.push(
+        prisma.rentalRequest.update({
+          where: { id: payment.rentalRequestId },
+          data: { status: "ACTIVE" },
+        }),
+        prisma.property.update({
+          where: { id: payment.rentalRequest.propertyId },
+          data: { status: "RENTED" },
+        }),
+        // the property is taken — reject everyone else still waiting
+        prisma.rentalRequest.updateMany({
+          where: {
+            propertyId: payment.rentalRequest.propertyId,
+            status: "PENDING",
+          },
+          data: { status: "REJECTED" },
+        }),
+      );
+    }
+
+    await prisma.$transaction(updates);
   }
 
   // webhook: checkout session expired without payment
