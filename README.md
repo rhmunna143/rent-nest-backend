@@ -1,0 +1,1 @@
+live_base_url: https://rent-nest-backend-eight.vercel.app

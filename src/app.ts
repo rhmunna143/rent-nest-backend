@@ -1,5 +1,6 @@
 import cookieParser from "cookie-parser";
 import express, { type Express, type Request, type Response } from "express";
+import cors from "cors";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.js";
 import { notFound } from "./middlewares/notFound.js";
 import { categoryRouter } from "./modules/category/category.route.js";
@@ -8,8 +9,16 @@ import { propertyRouter } from "./modules/property/property.route.js";
 import { rentalRequestRouter } from "./modules/rental-request/rentalRequest.route.js";
 import { reviewRouter } from "./modules/review/review.route.js";
 import { userRouter } from "./modules/user/user.route.js";
+import { config } from "./config/index.js";
 
 const app: Express = express();
+
+app.use(
+  cors({
+    origin: config.frontendUrl,
+    credentials: true,
+  }),
+);
 
 // Stripe webhook must receive the raw body for signature verification,
 // so this runs before express.json() (later parsers skip an already-read body).
