@@ -1,6 +1,6 @@
 # ISC License
 
-Copyright (c) 2026 Md. Rakibul Hasan Munna (@rhmunna143)
+Copyright (c) 2026 Md. Rabbi Haque Munna (@rhmunna143)
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
