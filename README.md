@@ -12,7 +12,7 @@ A backend REST API for a rental property marketplace. Landlords list properties 
 | API Documentation (Postman) | [DOCS/rent-nest-backend.postman_collection.json](./DOCS/rent-nest-backend.postman_collection.json) <!-- replace with published Postman link --> |
 | Postman Environment | [DOCS/rent-nest-backend-env.postman_environment.json](./DOCS/rent-nest-backend-env.postman_environment.json) |
 | Published Postman Link | [Published Postman CollectionLink](https://documenter.getpostman.com/view/31457961/2sBY4Jy3xC) |
-| Demo Video | _add link_ |
+| Demo Video | [Watch Demo Video](https://youtu.be/qN1sXaloDjE) |
 | PRD | [PRD.md](./PRD.md) |
 
 **Admin credentials:** `admin@rentnest.com` / `admin123`
